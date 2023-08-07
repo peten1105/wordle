@@ -1,5 +1,3 @@
-const 정답 = "APPLE";
-
 let index = 0;
 let attempts = 0;
 let timer;
@@ -26,8 +24,24 @@ function appStart() {
     clearInterval(timer);
   };
 
-  const handleEnterKey = () => {
+  const fillAnswer = () => {
+    for (let i = 0; i < 5; i++) {
+      const curKey = document.querySelector(
+        `.keyboard-block[data-key='${정답[i]}']`
+      );
+      curKey.style.background = "#990099";
+    }
+  };
+
+  const handleEnterKey = async () => {
     //정답확인
+
+    // 서버에 요청을 보내는 비동기 로직
+    // 응답을 보내고 받아서 json 포맷으로 변경
+    const 응답 = await fetch("/answer");
+    const 정답_객체 = await 응답.json();
+    const 정답 = 정답_객체.answer;
+
     let 맞은_개수 = 0;
     console.log("enter");
     for (let i = 0; i < 5; i++) {
@@ -50,8 +64,10 @@ function appStart() {
       curBlock.style.color = "white";
     }
 
-    if (맞은_개수 === 5) gameover();
-    else nextLine();
+    if (맞은_개수 === 5) {
+      gameover();
+      fillAnswer();
+    } else nextLine();
   };
 
   const handleBackspace = () => {
@@ -104,3 +120,6 @@ function appStart() {
 }
 
 appStart();
+
+// 참고
+// https://skt-t1-byungi.github.io/svelte-wordle/
